@@ -4,13 +4,13 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": "node server.js",
+        "start": "node server.js",
         "server": "nodemon server.js"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
-    "type": "commonjs",
+    "type": "module",
     "dependencies": {
         "bcryptjs": "^3.0.3",
         "cookie-parser": "^1.4.7",
