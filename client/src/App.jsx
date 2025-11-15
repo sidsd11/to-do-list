@@ -7,7 +7,7 @@ function App() {
 
     return (
         <div>
-            App
+            Apps
         </div>
     )
 }
