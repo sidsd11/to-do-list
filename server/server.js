@@ -27,5 +27,5 @@ app.listen(port, () => {
 })
 
 app.use('/api/user', userRouter)
-app.use('/api/tasks', taskRouter)
+app.use('/api/task', taskRouter)
 app.use('/api/data', dataRouter)
