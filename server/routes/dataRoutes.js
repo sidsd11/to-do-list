@@ -4,6 +4,6 @@ import { getUserData } from "../controllers/dataControllers.js";
 
 const dataRouter = express.Router();
 
-dataRouter.get('/data', userAuth, getUserData);
+dataRouter.get('/get-user-data', userAuth, getUserData);
 
 export default dataRouter;
