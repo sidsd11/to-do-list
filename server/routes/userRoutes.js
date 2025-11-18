@@ -6,7 +6,7 @@ const userRouter = express.Router()
 
 userRouter.post('/register', register)
 userRouter.post('/login', login)
-userRouter.post('/logout', userAuth, logout)
+userRouter.post('/logout', logout)
 userRouter.get('/is-auth', userAuth, isAuth)
 userRouter.post('/send-verification-otp', userAuth, sendVerificationOtp)
 userRouter.post('/verify-account', userAuth, verifyAccount)

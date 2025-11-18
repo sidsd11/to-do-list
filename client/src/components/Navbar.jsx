@@ -8,13 +8,13 @@ import { assets } from '../assets/assets'
 const Navbar = () => {
     const navigate = useNavigate()
     const currPage = useLocation().pathname
-    const { userData, backendurl, setUserData, setIsLoggedIn } = useContext(AppContext)
+    const { userData, backendUrl, setUserData, setIsLoggedIn } = useContext(AppContext)
 
     const sendVerificationOtp = async () => {
         try {
             axios.defaults.withCredentials = true
     
-            const {data} = await axios.post(`${backendurl}/api/user/send-verification-otp`)
+            const {data} = await axios.post(`${backendUrl}/api/user/send-verification-otp`)
             if(data.success) {
                 navigate('/email-verify')
                 toast.success(data.message)
@@ -32,7 +32,7 @@ const Navbar = () => {
         try {
             axios.defaults.withCredentials = true
 
-            const {data} = await axios.post(`${backendurl}/api/user/logout`)
+            const {data} = await axios.post(`${backendUrl}/api/user/logout`)
             if(data.success) {
                 setIsLoggedIn(false)
                 setUserData(false)
