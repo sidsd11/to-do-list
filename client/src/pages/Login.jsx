@@ -21,7 +21,7 @@ const Login = () => {
             
             axios.defaults.withCredentials = true
 
-            if(state === 'Regsiter') {
+            if(state === 'Register') {
                 const {data} = await axios.post(`${backendUrl}/api/user/register`, {name, email, password})
                 if(data.success) {
                     navigate('/login')
