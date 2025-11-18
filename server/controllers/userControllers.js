@@ -1,7 +1,7 @@
-import bcrypt from "bcryptjs"
-import jwt from "jsonwebtoken"
-import userModel from "../models/userModel.js"
-import transporter from "../config/nodemailer.js"
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
+import userModel from '../models/userModel.js'
+import transporter from '../config/nodemailer.js'
 
 export const register = async (req, res) => {
     const {name, email, password} = req.body
@@ -35,7 +35,7 @@ export const register = async (req, res) => {
         }
         await transporter.sendMail(mailOptions)
 
-        return res.json({success: true, message: 'User created successfully'})
+        return res.json({success: true, message: 'Account registered successfully. Please login to continue'})
     }
     catch (error) {
         return res.json({success: false, message: error.message})
@@ -45,18 +45,18 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
     const {email, password} = req.body
     if(!email || !password) {
-        return res.json({success: false, message: "Enter all the details"})
+        return res.json({success: false, message: 'Enter all the details'})
     }
 
     try {
         const user = await userModel.findOne({email})
         if(!user) {
-            return res.json({success: false, message: "User does not exist. Please register first and then login"})
+            return res.json({success: false, message: 'User does not exist. Please register first and then login'})
         }
 
         const isMatch = await bcrypt.compare(password, user.password)
         if(!isMatch) {
-            return res.json({success: false, message: "Invalid email or password"})
+            return res.json({success: false, message: 'Invalid email or password'})
         }
 
         const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: '7d'})
@@ -67,7 +67,7 @@ export const login = async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000
         })
 
-        return res.json({success: true, message: "User logged in successfully"})
+        return res.json({success: true, message: 'User logged in successfully'})
     }
     catch (error) {
         return res.json({success: false, message: error.message})
@@ -91,7 +91,7 @@ export const logout = async (req, res) => {
 
 export const isAuth = async (req, res) => {
     try {
-        return res.json({success: true, message: "User is authenticated"})
+        return res.json({success: true, message: 'User is authenticated'})
     }
     catch (error) {
         return res.json({success: false, message: error.message})
@@ -104,7 +104,7 @@ export const sendVerificationOtp = async (req, res) => {
 
         const user = await userModel.findById(userId)
         if(user.isAccountVerified) {
-            return res.json({success: false, message: "Account is already verified"})
+            return res.json({success: false, message: 'Account is already verified'})
         }
 
         const otp = String(Math.floor(100000 + Math.random() * 900000))
@@ -130,21 +130,21 @@ export const sendVerificationOtp = async (req, res) => {
 export const verifyAccount = async (req, res) => {
     const {userId, otp} = req.body
     if(!userId || !otp) {
-        return res.json({success: false, message: "Missing details"})
+        return res.json({success: false, message: 'Missing details'})
     }
 
     try {
         const user = await userModel.findById(userId)
         if(!user) {
-            return res.json({success: false, message: "User does not exist"})
+            return res.json({success: false, message: 'User does not exist'})
         }
         
         if(user.verifyAccountOtp !== otp || user.verifyAccountOtp === '') {
-            return res.json({success: false, message: "Invalid OTP"})
+            return res.json({success: false, message: 'Invalid OTP'})
         }
 
         if(user.verifyOtpExpiresAt < Date.now()) {
-            return res.json({success: false, message: "Your OTP has expired"})
+            return res.json({success: false, message: 'Your OTP has expired'})
         }
 
         user.isAccountVerified = true
@@ -152,7 +152,7 @@ export const verifyAccount = async (req, res) => {
         user.verifyAccountOtpExpiresAt = 0
         await user.save()
 
-        return res.json({success: true, message: "Account verified successfully"})
+        return res.json({success: true, message: 'Account verified successfully'})
     }
     catch (error) {
         return res.json({success: false, message: error.message})
@@ -165,7 +165,7 @@ export const sendResetPasswordOtp = async (req, res) => {
 
         const user = await userModel.findOne(email)
         if(!user) {
-            return res.json({success: false, message: "User does not exist"})
+            return res.json({success: false, message: 'User does not exist'})
         }
 
         const otp = String(Math.floor(100000 + Math.random() * 900000))
@@ -191,21 +191,21 @@ export const sendResetPasswordOtp = async (req, res) => {
 export const resetPassword = async (req, res) => {
     const {email, otp, password} = req.body
     if(!email || !otp || !password) {
-        return res.json({success: false, message: "Missing details"})
+        return res.json({success: false, message: 'Missing details'})
     }
 
     try {
         const user = await userModel.findOne({email})
         if(!user) {
-            return res.json({success: false, message: "User does not exist"})
+            return res.json({success: false, message: 'User does not exist'})
         }
         
         if(user.resetPasswordOtp !== otp || user.resetPasswordOtp === '') {
-            return res.json({success: false, message: "Invalid OTP"})
+            return res.json({success: false, message: 'Invalid OTP'})
         }
 
         if(user.resetPasswordresAt < Date.now()) {
-            return res.json({success: false, message: "Your OTP has expired"})
+            return res.json({success: false, message: 'Your OTP has expired'})
         }
 
         const newPassword = await bcrypt.hash(password, 10)
@@ -214,7 +214,7 @@ export const resetPassword = async (req, res) => {
         user.resetPasswordOtpExpiresAt = 0
         await user.save()
 
-        return res.json({success: true, message: "Password changed successfully"})
+        return res.json({success: true, message: 'Password changed successfully'})
     }
     catch (error) {
         return res.json({success: false, message: error.message})

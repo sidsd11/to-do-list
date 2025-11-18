@@ -1,12 +1,12 @@
-import express from "express";
-import cors from "cors"
+import express from 'express';
+import cors from 'cors'
 import 'dotenv/config'
-import cookieParser from "cookie-parser";
+import cookieParser from 'cookie-parser';
 
-import connectDB from "./config/mongodb.js";
-import userRouter from "./routes/userRoutes.js";
-import taskRouter from "./routes/taskRoutes.js";
-import dataRouter from "./routes/dataRoutes.js";
+import connectDB from './config/mongodb.js';
+import userRouter from './routes/userRoutes.js';
+import taskRouter from './routes/taskRoutes.js';
+import dataRouter from './routes/dataRoutes.js';
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -19,7 +19,7 @@ app.use(express.json())
 app.use(cookieParser())
 
 app.get('/', (req, res) => {
-    res.send("API Working")
+    res.send('API Working')
 })
 
 app.listen(port, () => {
