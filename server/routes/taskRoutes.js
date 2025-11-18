@@ -1,6 +1,6 @@
-import express from "express"
-import { createTask, editTask, completeTask, deleteTask } from "../controllers/taskControllers.js"
-import userAuth from "../middleware/authUser.js"
+import express from 'express'
+import { createTask, editTask, completeTask, deleteTask } from '../controllers/taskControllers.js'
+import userAuth from '../middleware/authUser.js'
 
 const taskRouter = express.Router()
 
