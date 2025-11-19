@@ -1,12 +1,11 @@
-import express from 'express';
+import express from 'express'
 import cors from 'cors'
 import 'dotenv/config'
-import cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser'
 
-import connectDB from './config/mongodb.js';
-import userRouter from './routes/userRoutes.js';
-import taskRouter from './routes/taskRoutes.js';
-import dataRouter from './routes/dataRoutes.js';
+import connectDB from './config/mongodb.js'
+import userRouter from './routes/userRoutes.js'
+import taskRouter from './routes/taskRoutes.js'
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -28,4 +27,3 @@ app.listen(port, () => {
 
 app.use('/api/user', userRouter)
 app.use('/api/task', taskRouter)
-app.use('/api/data', dataRouter)

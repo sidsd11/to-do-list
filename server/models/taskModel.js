@@ -1,7 +1,7 @@
-import mongoose from 'mongoose';
+import mongoose from 'mongoose'
 
 const taskSchema = new mongoose.Schema({
-    userName: {type: String, required: true},
+    email: {type: String, required: true},
     title: {type: String, required: true},
     task: {type: String, required: true},
     isCompleted: {type: Boolean, default: false},

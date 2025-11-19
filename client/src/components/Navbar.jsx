@@ -8,14 +8,14 @@ import { assets } from '../assets/assets'
 const Navbar = () => {
     const navigate = useNavigate()
     const currPage = useLocation().pathname
-    const { userData, backendUrl, setUserData, setIsLoggedIn } = useContext(AppContext)
+    const {userData, backendUrl, setUserData, setIsLoggedIn} = useContext(AppContext)
 
     const sendVerificationOtp = async () => {
         try {
             axios.defaults.withCredentials = true
     
             const {data} = await axios.post(`${backendUrl}/api/user/send-verification-otp`)
-            if(data.success) {
+            if (data.success) {
                 navigate('/email-verify')
                 toast.success(data.message)
             }
@@ -33,9 +33,9 @@ const Navbar = () => {
             axios.defaults.withCredentials = true
 
             const {data} = await axios.post(`${backendUrl}/api/user/logout`)
-            if(data.success) {
+            if (data.success) {
                 setIsLoggedIn(false)
-                setUserData(false)
+                setUserData(null)
                 navigate('/')
             }
             else {
@@ -52,20 +52,28 @@ const Navbar = () => {
             <img src={assets.logo} onClick={() => navigate('/')} className='w-28 sm:w-32 cursor-pointer hover:scale-110 transition-all'/>
             {userData
             ?
-            <div className='w-8 h-8 flex justify-center items-center rounded-full bg-black text-white relative group'>
-                {userData.name[0].toUpperCase()}
+            <div className='w-8 h-8 flex justify-center items-center rounded-full bg-black text-white relative group cursor-pointer'>
+                {userData?.name[0].toUpperCase()}
                 <div className='absolute hidden group-hover:block top-0 right-0 z-10 text-black rounded pt-10'>
                     <ul className='list none m-0 p-2 text-sm rounded-2xl border border-black bg-linear-to-br from-blue-50 to-purple-100'>
                         {currPage !== '/' &&
-                            <li onClick={() => navigate('/')} className='py-2 px-2 whitespace-nowrap rounded-lg transition-all cursor-pointer hover:bg-linear-to-r hover:from-blue-100 hover:to-purple-200 hover:scale-110'>Home</li>
+                            <li onClick={() => navigate('/')} className='py-2 px-2 whitespace-nowrap rounded-lg transition-all cursor-pointer hover:bg-linear-to-r hover:from-blue-100 hover:to-purple-200 hover:scale-110'>
+                                Home
+                            </li>
                         }
-                        {!userData.isAccountVerified && currPage !== '/verify-email' &&
-                            <li onClick={sendVerificationOtp} className='py-2 px-2 whitespace-nowrap rounded-lg transition-all cursor-pointer hover:bg-linear-to-r hover:from-blue-100 hover:to-purple-200 hover:scale-110'>Verify Email</li>
+                        {!userData?.isAccountVerified && currPage !== '/email-verify' &&
+                            <li onClick={sendVerificationOtp} className='py-2 px-2 whitespace-nowrap rounded-lg transition-all cursor-pointer hover:bg-linear-to-r hover:from-blue-100 hover:to-purple-200 hover:scale-110'>
+                                Verify Email
+                            </li>
                         }
                         {currPage !== '/my-tasks' &&
-                            <li onClick={() => navigate('/my-tasks')} className='py-2 px-2 whitespace-nowrap rounded-lg transition-all cursor-pointer hover:bg-linear-to-r hover:from-blue-100 hover:to-purple-200 hover:scale-110'>My Tasks</li>
+                            <li onClick={() => navigate('/my-tasks')} className='py-2 px-2 whitespace-nowrap rounded-lg transition-all cursor-pointer hover:bg-linear-to-r hover:from-blue-100 hover:to-purple-200 hover:scale-110'>
+                                My Tasks
+                            </li>
                         }
-                            <li onClick={logout} className='py-2 px-2 whitespace-nowrap rounded-lg transition-all cursor-pointer hover:bg-linear-to-r hover:from-blue-100 hover:to-purple-200 hover:scale-110'>Logout</li>
+                            <li onClick={logout} className='py-2 px-2 whitespace-nowrap rounded-lg transition-all cursor-pointer hover:bg-linear-to-r hover:from-blue-100 hover:to-purple-200 hover:scale-110'>
+                                Logout                                
+                            </li>
                     </ul>
                 </div>
             </div>

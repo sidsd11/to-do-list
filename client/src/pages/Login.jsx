@@ -4,11 +4,12 @@ import { useNavigate } from 'react-router-dom'
 import { AppContext } from '../context/AppContext.jsx'
 import axios from 'axios'
 import { toast } from 'react-toastify'
-import { User, Mail, Lock } from 'lucide-react'
+import { Loader, User, Mail, Lock } from 'lucide-react'
+import { useEffect } from 'react'
 
 const Login = () => {
     const navigate = useNavigate()
-    const {backendUrl, setIsLoggedIn, getUserData} = useContext(AppContext)
+    const {backendUrl, isLoggedIn, setIsLoggedIn, getUserData, loading} = useContext(AppContext)
 
     const [state, setState] = useState('Login')
     const [name, setName] = useState('')
@@ -21,9 +22,9 @@ const Login = () => {
             
             axios.defaults.withCredentials = true
 
-            if(state === 'Register') {
+            if (state === 'Register') {
                 const {data} = await axios.post(`${backendUrl}/api/user/register`, {name, email, password})
-                if(data.success) {
+                if (data.success) {
                     navigate('/login')
                     toast.success(data.message)
                 }
@@ -33,7 +34,7 @@ const Login = () => {
             }
             else {
                 const {data} = await axios.post(`${backendUrl}/api/user/login`, {email, password})
-                if(data.success) {
+                if (data.success) {
                     setIsLoggedIn(true)
                     getUserData()
                     navigate('/')
@@ -48,13 +49,38 @@ const Login = () => {
         }
     }
 
+    useEffect(() => {
+        const init = async () => {
+            try {
+                if (isLoggedIn) {
+                    navigate('/')
+                }
+            }
+            catch (error) {
+                toast.error(error.message)
+            }
+        }
+        init()
+    }, [])
+
     return (
+        loading
+        ?
+        <div className='flex flex-col items-center justify-center min-h-screen bg-linear-to-br from-blue-200 to-purple-400'>
+            <h1 className='text-3xl text-center font-semibold text-black mb-5'>
+                Loading your page...
+            </h1>
+            <Loader className='animate-spin'/>
+        </div>
+        :
         <div className='flex flex-col items-center justify-center min-h-screen bg-linear-to-br from-blue-200 to-purple-400'>
             <div className='w-full flex justify-between items-center p-4 sm:p-6 sm:px-24 absolute top-0'>
                 <img src={assets.logo} onClick={() => navigate('/')} className='w-28 sm:w-32 cursor-pointer hover:scale-110 transition-all'/>
             </div>
             <div className='flex flex-col items-center mt-20 px-4 text-center bg-slate-900 p-10 rounded-lg shadow-lg w-[70%] sm:w-96 text-indigo-300 text-sm'>
-                <h1 className='text-3xl text-center font-semibold text-white mb-5'>Login</h1>
+                <h1 className='text-3xl text-center font-semibold text-white mb-5'>
+                    Login
+                </h1>
                 <form onSubmit={onSubmitHandler}>
                     {state === 'Register' && (
                         <div className='mb-4 flex items-center gap-3 w-full px-5 py-2 5 rounded-lg bg-[#333A5C]'>
