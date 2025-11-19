@@ -9,40 +9,59 @@ export const AppContextProvider = (props) => {
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL
     const [isLoggedIn, setIsLoggedIn] = useState(false)
-    const [userData, setUserData] = useState(false)
+    const [userData, setUserData] = useState(null)
+    const [authLoading, setAuthLoading] = useState(true)
+    const [loading, setLoading] = useState(true)
 
-    const getAuthState = async() => {
+    const getUserData = async () => {
         try {
-            const {data} = await axios.get(`${backendUrl}/api/user/is-auth`)
-            if(data.success) {
-                setIsLoggedIn(true)
-                getUserData()
+            const {data} = await axios.get(`${backendUrl}/api/user/get-user-data`)
+            if (data.success) {
+                setUserData(data.userData)
+            }
+            else {
+                setUserData(null)
+                toast.error(data.message)
             }
         }
         catch (error) {
             toast.error(error.message)
-        }
-    }
-
-    const getUserData = async() => {
-        try {
-            const {data} = await axios.get(`${backendUrl}/api/data/get-user-data`)
-            data.success ? setUserData(data.userData) : toast.error(error.message)
-        }
-        catch (error) {
-            toast.error(error.message)
+            setUserData(null)
         }
     }
 
     useEffect(() => {
-        getAuthState()
+        const init = async () => {
+            setAuthLoading(true)
+            try {
+                const {data} = await axios.get(`${backendUrl}/api/user/is-auth`)
+                if(data.success) {
+                    setIsLoggedIn(true)
+                    await getUserData()
+                }
+                else {
+                    setIsLoggedIn(false)
+                    setUserData(null)
+                }
+            }
+            catch (error) {
+                toast.error(error.message)
+                setIsLoggedIn(false)
+                setUserData(null)
+            }
+            setLoading(false)
+            setAuthLoading(false)
+        }
+        init()
     }, [])
 
     const value = {
         backendUrl,
         isLoggedIn, setIsLoggedIn,
         userData, setUserData,
-        getUserData
+        getUserData,
+        authLoading, setAuthLoading,
+        loading, setLoading
     }
 
     return (

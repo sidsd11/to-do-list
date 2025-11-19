@@ -5,13 +5,13 @@ import transporter from '../config/nodemailer.js'
 
 export const register = async (req, res) => {
     const {name, email, password} = req.body
-    if(!name || !email || !password) {
+    if (!name || !email || !password) {
         return res.json({success: false, message: 'Enter all the details'})
     }
 
     try {
         const existingUser = await userModel.findOne({email})
-        if(existingUser) {
+        if (existingUser) {
             return res.json({success: false, message: 'User already exists. Please login'})
         }
 
@@ -44,18 +44,18 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
     const {email, password} = req.body
-    if(!email || !password) {
+    if (!email || !password) {
         return res.json({success: false, message: 'Enter all the details'})
     }
 
     try {
         const user = await userModel.findOne({email})
-        if(!user) {
+        if (!user) {
             return res.json({success: false, message: 'User does not exist. Please register first and then login'})
         }
 
         const isMatch = await bcrypt.compare(password, user.password)
-        if(!isMatch) {
+        if (!isMatch) {
             return res.json({success: false, message: 'Invalid email or password'})
         }
 
@@ -100,10 +100,10 @@ export const isAuth = async (req, res) => {
 
 export const sendVerificationOtp = async (req, res) => {
     try {
-        const {userId} = req.body
+        const userId = req.user.id
 
         const user = await userModel.findById(userId)
-        if(user.isAccountVerified) {
+        if (user.isAccountVerified) {
             return res.json({success: false, message: 'Account is already verified'})
         }
 
@@ -129,21 +129,21 @@ export const sendVerificationOtp = async (req, res) => {
 
 export const verifyAccount = async (req, res) => {
     const {userId, otp} = req.body
-    if(!userId || !otp) {
+    if (!userId || !otp) {
         return res.json({success: false, message: 'Missing details'})
     }
 
     try {
         const user = await userModel.findById(userId)
-        if(!user) {
+        if (!user) {
             return res.json({success: false, message: 'User does not exist'})
         }
         
-        if(user.verifyAccountOtp !== otp || user.verifyAccountOtp === '') {
+        if (user.verifyAccountOtp !== otp || user.verifyAccountOtp === '') {
             return res.json({success: false, message: 'Invalid OTP'})
         }
 
-        if(user.verifyOtpExpiresAt < Date.now()) {
+        if (user.verifyOtpExpiresAt < Date.now()) {
             return res.json({success: false, message: 'Your OTP has expired'})
         }
 
@@ -164,7 +164,7 @@ export const sendResetPasswordOtp = async (req, res) => {
         const {email} = req.body
 
         const user = await userModel.findOne(email)
-        if(!user) {
+        if (!user) {
             return res.json({success: false, message: 'User does not exist'})
         }
 
@@ -190,21 +190,21 @@ export const sendResetPasswordOtp = async (req, res) => {
 
 export const resetPassword = async (req, res) => {
     const {email, otp, password} = req.body
-    if(!email || !otp || !password) {
+    if (!email || !otp || !password) {
         return res.json({success: false, message: 'Missing details'})
     }
 
     try {
         const user = await userModel.findOne({email})
-        if(!user) {
+        if (!user) {
             return res.json({success: false, message: 'User does not exist'})
         }
         
-        if(user.resetPasswordOtp !== otp || user.resetPasswordOtp === '') {
+        if (user.resetPasswordOtp !== otp || user.resetPasswordOtp === '') {
             return res.json({success: false, message: 'Invalid OTP'})
         }
 
-        if(user.resetPasswordresAt < Date.now()) {
+        if (user.resetPasswordresAt < Date.now()) {
             return res.json({success: false, message: 'Your OTP has expired'})
         }
 
@@ -215,6 +215,31 @@ export const resetPassword = async (req, res) => {
         await user.save()
 
         return res.json({success: true, message: 'Password changed successfully'})
+    }
+    catch (error) {
+        return res.json({success: false, message: error.message})
+    }
+}
+
+export const getUserData = async (req, res) => {
+    try {
+        const userId = req.user.id
+
+        const user = await userModel.findById(userId)
+
+        if (!user) {
+            return res.json({success: false, message: 'User does not exist'})
+        }
+
+        res.json({
+            success: true,
+            userData: {
+                id: user.userId,
+                name: user.name,
+                isAccountVerified: user.isAccountVerified,
+                email: user.email
+            }
+        })
     }
     catch (error) {
         return res.json({success: false, message: error.message})
