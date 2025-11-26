@@ -128,9 +128,10 @@ export const sendVerificationOtp = async (req, res) => {
 }
 
 export const verifyAccount = async (req, res) => {
-    const {userId, otp} = req.body
-    if (!userId || !otp) {
-        return res.json({success: false, message: 'Missing details'})
+    const userId = req.user.id
+    const {otp} = req.body
+    if (!otp) {
+        return res.json({success: false, message: 'Missing OTP'})
     }
 
     try {
@@ -143,7 +144,7 @@ export const verifyAccount = async (req, res) => {
             return res.json({success: false, message: 'Invalid OTP'})
         }
 
-        if (user.verifyOtpExpiresAt < Date.now()) {
+        if (user.verifyAccountOtpExpiresAt < Date.now()) {
             return res.json({success: false, message: 'Your OTP has expired'})
         }
 
@@ -234,7 +235,7 @@ export const getUserData = async (req, res) => {
         res.json({
             success: true,
             userData: {
-                id: user.userId,
+                id: user._id,
                 name: user.name,
                 isAccountVerified: user.isAccountVerified,
                 email: user.email
