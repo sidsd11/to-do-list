@@ -4,10 +4,10 @@ import userAuth from '../middleware/authUser.js'
 
 const taskRouter = express.Router()
 
-taskRouter.get('/get-all-tasks/:email', userAuth, getAllTasks)
+taskRouter.get('/get-all-tasks/:id', userAuth, getAllTasks)
 taskRouter.post('/create-task', userAuth, createTask)
-taskRouter.patch('/edit-task/:taskId', userAuth, editTask)
-taskRouter.patch('/complete-task/:taskId', userAuth, completeTask)
-taskRouter.delete('/delete-task/:taskId', userAuth, deleteTask)
+taskRouter.patch('/edit-task/:id', userAuth, editTask)
+taskRouter.patch('/complete-task/:id', userAuth, completeTask)
+taskRouter.delete('/delete-task/:id', userAuth, deleteTask)
 
 export default taskRouter

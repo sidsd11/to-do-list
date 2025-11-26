@@ -16,6 +16,7 @@ const Navbar = () => {
     
             const {data} = await axios.post(`${backendUrl}/api/user/send-verification-otp`)
             if (data.success) {
+                sessionStorage.setItem("prevPage", "/");
                 navigate('/email-verify')
                 toast.success(data.message)
             }

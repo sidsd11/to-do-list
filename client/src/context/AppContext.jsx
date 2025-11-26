@@ -35,7 +35,7 @@ export const AppContextProvider = (props) => {
             setAuthLoading(true)
             try {
                 const {data} = await axios.get(`${backendUrl}/api/user/is-auth`)
-                if(data.success) {
+                if (data.success) {
                     setIsLoggedIn(true)
                     await getUserData()
                 }

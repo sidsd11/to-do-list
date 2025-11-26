@@ -10,7 +10,7 @@ export const getAllTasks = async (req, res) => {
             return res.json({success: false, message: 'User does not exist'})
         }
 
-        const tasks = await taskModel.find({email: user.email}).sort({createdAt: -1})
+        const tasks = await taskModel.find({userId, isCompleted: false}).sort({createdAt: -1})
 
         return res.json({success: true, message: 'Tasks fetched successfully', tasks})
     }
@@ -20,13 +20,13 @@ export const getAllTasks = async (req, res) => {
 }
 
 export const createTask = async (req, res) => {
-    const {email, title, task} = req.body
-    if (!email, !title, !task) {
-        return res.json({success: false, message: 'Missing details'})
-    }
-
     try {
-        const createTask = new taskModel({email, title, task, createdAt: Date.now()})
+        const userId = req.user.id
+        const {email, title, task} = req.body
+        if (!email, !title, !task) {
+            return res.json({success: false, message: 'Missing details'})
+        }
+        const createTask = new taskModel({userId, email, title, task, createdAt: Date.now()})
         await createTask.save()
     
         return res.json({success: true, message: 'Task created succesfully'})        
@@ -65,7 +65,7 @@ export const editTask = async (req, res) => {
 }
 
 export const completeTask = async (req, res) => {
-    const {taskId} = req.body
+    const taskId = req.params.id
     if (!taskId) {
         return res.json({success: false, message: 'Missing details'})
     }
