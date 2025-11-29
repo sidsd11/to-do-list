@@ -10,7 +10,7 @@ export const getAllTasks = async (req, res) => {
             return res.json({success: false, message: 'User does not exist'})
         }
 
-        const tasks = await taskModel.find({userId, isCompleted: false}).sort({createdAt: -1})
+        const tasks = await taskModel.find({userId}).sort({createdAt: -1})
 
         return res.json({success: true, message: 'Tasks fetched successfully', tasks})
     }
@@ -22,11 +22,11 @@ export const getAllTasks = async (req, res) => {
 export const createTask = async (req, res) => {
     try {
         const userId = req.user.id
-        const {email, title, task} = req.body
-        if (!email, !title, !task) {
+        const {email, title, description} = req.body
+        if (!email, !title, !description) {
             return res.json({success: false, message: 'Missing details'})
         }
-        const createTask = new taskModel({userId, email, title, task, createdAt: Date.now()})
+        const createTask = new taskModel({userId, email, title, description, createdAt: Date.now()})
         await createTask.save()
     
         return res.json({success: true, message: 'Task created succesfully'})        
@@ -86,6 +86,34 @@ export const completeTask = async (req, res) => {
         }
     
         return res.json({success: true, message: 'Task marked as completed'})        
+    }
+    catch (error) {
+        return res.json({success: false, message: error.message})
+    }
+}
+
+export const pendingTask = async (req, res) => {
+    const taskId = req.params.id
+    if (!taskId) {
+        return res.json({success: false, message: 'Missing details'})
+    }
+
+    try {
+        const selectedTask = await taskModel.findByIdAndUpdate(
+            taskId,
+            {
+                $set: {
+                    isCompleted: false,
+                    completedAt: 0
+                }
+            },
+            {new: true, runValidators: true}
+        )
+        if (!selectedTask) {
+            return res.json({success: false, message: 'Task not found'})
+        }
+    
+        return res.json({success: true, message: 'Task marked as pending'})        
     }
     catch (error) {
         return res.json({success: false, message: error.message})
