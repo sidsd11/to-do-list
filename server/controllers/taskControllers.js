@@ -19,6 +19,33 @@ export const getAllTasks = async (req, res) => {
     }
 }
 
+export const getSingleTask = async (req, res) => {
+    try {
+        const userId = req.user.id
+        const taskId = req.params.id
+        if (!taskId) {
+            return res.json({success: false, message: 'Missing details'})
+        }
+
+        const user = await userModel.findById(userId)
+        if (!user) {
+            return res.json({success: false, message: 'User does not exist'})
+        }
+
+        const task = await taskModel.findById(taskId)
+
+        if (task.userId === userId) {
+            return res.json({success: true, message: 'Tasks fetched successfully', task})
+        }
+        else {
+            return res.json({success: false, message: 'You cannot access this task'})
+        }
+    }
+    catch (error) {
+        return res.json({success: false, message: 'Not authorized. Login again'})
+    }
+}
+
 export const createTask = async (req, res) => {
     try {
         const userId = req.user.id
@@ -38,17 +65,17 @@ export const createTask = async (req, res) => {
 }
 
 export const editTask = async (req, res) => {
-    const {taskId, title, task} = req.body
-    if (!taskId || !title || !task) {
-        return res.json({success: false, message: 'Missing details'})
-    }
-
     try {
+        const {taskId, title, description} = req.body
+        if (!taskId || !title || !description) {
+            return res.json({success: false, message: 'Missing details'})
+        }
+
         const selectedTask = await taskModel.findByIdAndUpdate(
             taskId,
             {
                 $set: {
-                    title, task
+                    title, description, editedAt: Date.now()
                 }
             },
             {new: true, runValidators: true}
@@ -65,12 +92,12 @@ export const editTask = async (req, res) => {
 }
 
 export const completeTask = async (req, res) => {
-    const taskId = req.params.id
-    if (!taskId) {
-        return res.json({success: false, message: 'Missing details'})
-    }
-
     try {
+        const taskId = req.params.id
+        if (!taskId) {
+            return res.json({success: false, message: 'Missing details'})
+        }
+
         const selectedTask = await taskModel.findByIdAndUpdate(
             taskId,
             {
@@ -93,12 +120,12 @@ export const completeTask = async (req, res) => {
 }
 
 export const pendingTask = async (req, res) => {
-    const taskId = req.params.id
-    if (!taskId) {
-        return res.json({success: false, message: 'Missing details'})
-    }
-
     try {
+        const taskId = req.params.id
+        if (!taskId) {
+            return res.json({success: false, message: 'Missing details'})
+        }
+
         const selectedTask = await taskModel.findByIdAndUpdate(
             taskId,
             {
@@ -121,12 +148,12 @@ export const pendingTask = async (req, res) => {
 }
 
 export const deleteTask = async (req, res) => {
-    const {taskId} = req.body
-    if (!taskId) {
-        return res.json({success: false, message: 'Missing details'})
-    }
-
     try {
+        const {taskId} = req.body
+        if (!taskId) {
+            return res.json({success: false, message: 'Missing details'})
+        }
+
         const selectedTask = await taskModel.findByIdAndDelete(taskId)
         if (!selectedTask) {
             return res.json({success: false, message: 'Task not found'})
