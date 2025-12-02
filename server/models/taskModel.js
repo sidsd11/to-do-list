@@ -3,8 +3,8 @@ import mongoose from 'mongoose'
 const taskSchema = new mongoose.Schema({
     userId: {type: String, required: true},
     email: {type: String, required: true},
-    title: {type: String, required: true},
-    description: {type: String, required: true},
+    title: {type: String, maxlength: 20, required: true},
+    description: {type: String, maxlength: 200, required: true},
     isCompleted: {type: Boolean, default: false},
     createdAt: {type: Number, default: 0},
     editedAt: {type: Number, default: 0},

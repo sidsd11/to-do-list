@@ -66,7 +66,8 @@ export const createTask = async (req, res) => {
 
 export const editTask = async (req, res) => {
     try {
-        const {taskId, title, description} = req.body
+        const taskId = req.params.id
+        const {title, description} = req.body
         if (!taskId || !title || !description) {
             return res.json({success: false, message: 'Missing details'})
         }
