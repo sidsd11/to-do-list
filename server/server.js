@@ -11,7 +11,7 @@ const app = express()
 const port = process.env.PORT || 3000
 connectDB()
 
-const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174', 'http://hecpune.com', 'https://hecpune.com']
+const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174']
 
 app.use(cors({origin: allowedOrigins, credentials: true}))
 app.use(express.json())
