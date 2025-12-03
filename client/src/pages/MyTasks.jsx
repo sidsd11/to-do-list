@@ -21,6 +21,7 @@ const MyTasks = () => {
     const [editTitleCheck, setEditTitleCheck] = useState('')
     const [editDescriptionCheck, setEditDescriptionCheck] = useState('')
     const [editTaskId, setEditTaskId] = useState('')
+    const [fadeOut, setFadeOut] = useState(false)
 
     const getTasks = async () => {
         try {
@@ -128,6 +129,20 @@ const MyTasks = () => {
         }
     }
 
+    const convertTime = (t) => {
+        const day = String(t.getDate()).padStart(2, '0')
+        const month = String(t.getMonth() + 1).padStart(2, '0')
+        const year = String(t.getFullYear()).slice(-2)
+
+        let hour = t.getHours()
+        const min = String(t.getMinutes()).padStart(2, '0')
+        const sec = String(t.getSeconds()).padStart(2, '0')
+        const ampm = hour >= 12 ? 'pm' : 'am'
+        hour = String(hour % 12 || 12).padStart(2, '0')
+
+        return `${day}/${month}/${year} ${hour}:${min}:${sec} ${ampm}`
+    }
+
     useEffect(() => {
         if (authLoading) return
         if (!isLoggedIn) {
@@ -190,7 +205,7 @@ const MyTasks = () => {
                                         filter.map((f, index) => (
                                             <button
                                             key = {index}
-                                            className={`px-4 py-2 rounded-full border border-indigo-600 transition-all ${selectedFilter === f ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-200'}`}
+                                            className={`px-4 py-2 rounded-full border border-indigo-600 transition-all ${selectedFilter === f ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-200 hover:scale-110'}`}
                                             onClick={() => setSelectedFilter(f)}
                                             >
                                                 {f}
@@ -215,7 +230,7 @@ const MyTasks = () => {
                                     </select>
                                 </div>
                                 
-                                <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 place-items-center w-full'>
+                                <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full'>
                                     {(() => {
                                         const filteredTasks = tasks.filter(task => {
                                             if (selectedFilter === 'Completed') return task.isCompleted
@@ -232,12 +247,14 @@ const MyTasks = () => {
                                         }
 
                                         return filteredTasks.map(task => (
-                                            <div key={task._id} className='p-4 bg-white shadow-md rounded-lg hover:shadow-xl hover:scale-[1.03] transition-all'>
+                                            <div
+                                            key={task._id}
+                                            className={`${selectedFilter !== 'All' ? 'transition-opacity' : ''} p-4 bg-white shadow-md rounded-lg hover:shadow-xl hover:z-10 hover:scale-[1.03] transition-all w-full h-full`}>
                                                 <h3 className='font-semibold text-lg text-gray-800 border-b pb-2'>
                                                     {task.title}
                                                 </h3>
 
-                                                <p className='text-gray-600 text-sm mt-2'>
+                                                <p className='text-gray-600 text-sm mt-2 transition-all duration-300 break-all whitespace-normal'>
                                                     {
                                                         expandedTaskId === task._id ? task.description : task.description.length > 50 ? task.description.substring(0, 50) + '...' : task.description
                                                     }
@@ -245,20 +262,22 @@ const MyTasks = () => {
                                                 
                                                 {
                                                     task.description?.length > 50 &&
-                                                    <div className='flex justify-center items-center mt-3 gap-2' onClick={() => setExpandedTaskId(expandedTaskId === task._id ? null : task._id)}>
-                                                        {
-                                                            expandedTaskId === task._id ? <ChevronUp /> : <ChevronDown />
-                                                        }
+                                                    <div className='flex justify-center items-center mt-3 gap-2'>
+                                                        <p className='cursor-pointer' onClick={() => setExpandedTaskId(expandedTaskId === task._id ? null : task._id)}>                                                            
+                                                            {
+                                                                expandedTaskId === task._id ? <ChevronUp /> : <ChevronDown />
+                                                            }
+                                                        </p>
                                                     </div>
                                                 }
 
-                                                <div className='flex justify-center items-center mt-3'>
+                                                <div className='flex justify-center items-center mt-3 transition-all'>
                                                     <label className='flex items-center gap-2 cursor-pointer'>
                                                         <input
                                                         type='checkbox'
                                                         checked={task.isCompleted}
                                                         onChange={() => completeTask(task._id, task.isCompleted)}
-                                                        className='accent-green-600 cursor-pointer'
+                                                        className={`accent-green-600 cursor-pointer`}
                                                         />
                                                         <p className={`${task.isCompleted ? 'text-green-600' : 'text-yellow-600'} text-xs`}>
                                                             {task.isCompleted ? 'Completed' : 'Pending'}
@@ -268,7 +287,7 @@ const MyTasks = () => {
 
                                                 <div className='flex justify-center items-center mt-3 gap-2'>
                                                     <p className='text-xs text-gray-500'>
-                                                        Created at: {new Date(task.createdAt).toLocaleDateString()}
+                                                        Created at: {convertTime(new Date(task.createdAt))}
                                                     </p>
                                                 </div>
 
@@ -276,7 +295,7 @@ const MyTasks = () => {
                                                     task.editedAt !== 0 && (
                                                         <div className='flex justify-center items-center mt-3 gap-2'>
                                                             <p className='text-xs text-gray-500'>
-                                                                Edited at: {new Date(task.editedAt).toLocaleDateString()}
+                                                                Edited at: {convertTime(new Date(task.editedAt))}
                                                             </p>
                                                         </div>
                                                     )
@@ -286,7 +305,7 @@ const MyTasks = () => {
                                                     task.completedAt !== 0 && (
                                                         <div className='flex justify-center items-center mt-3 gap-2'>
                                                             <p className='text-xs text-gray-500'>
-                                                                Completed at: {new Date(task.completedAt).toLocaleDateString()}
+                                                                Completed at: {convertTime(new Date(task.completedAt))}
                                                             </p>
                                                         </div>
                                                     )
