@@ -7,9 +7,11 @@ import { assets } from '../assets/assets'
 
 const Navbar = () => {
     const navigate = useNavigate()
+
     const currPage = useLocation().pathname
     const {userData, backendUrl, setUserData, setIsLoggedIn} = useContext(AppContext)
 
+    /* Send OTP to verify account */
     const sendVerificationOtp = async () => {
         try {
             axios.defaults.withCredentials = true
@@ -29,6 +31,7 @@ const Navbar = () => {
         }
     }
 
+    /* Logout */
     const logout = async () => {
         try {
             axios.defaults.withCredentials = true
@@ -58,17 +61,20 @@ const Navbar = () => {
                         {userData?.name[0].toUpperCase()}
                         <div className='absolute hidden group-hover:block top-0 right-0 z-10 text-black rounded pt-10'>
                             <ul className='list none m-0 p-2 text-sm rounded-2xl border border-black bg-linear-to-br from-blue-50 to-purple-100'>
-                                {currPage !== '/' &&
+                                {
+                                    currPage !== '/' &&
                                     <li onClick={() => navigate('/')} className='py-2 px-2 whitespace-nowrap rounded-lg transition-all cursor-pointer hover:bg-linear-to-r hover:from-blue-100 hover:to-purple-200 hover:scale-110'>
                                         Home
                                     </li>
                                 }
-                                {!userData?.isAccountVerified && currPage !== '/email-verify' &&
+                                {
+                                    !userData?.isAccountVerified && currPage !== '/email-verify' &&
                                     <li onClick={sendVerificationOtp} className='py-2 px-2 whitespace-nowrap rounded-lg transition-all cursor-pointer hover:bg-linear-to-r hover:from-blue-100 hover:to-purple-200 hover:scale-110'>
                                         Verify Email
                                     </li>
                                 }
-                                {currPage !== '/my-tasks' &&
+                                {
+                                    currPage !== '/my-tasks' &&
                                     <li onClick={() => navigate('/my-tasks')} className='py-2 px-2 whitespace-nowrap rounded-lg transition-all cursor-pointer hover:bg-linear-to-r hover:from-blue-100 hover:to-purple-200 hover:scale-110'>
                                         My Tasks
                                     </li>

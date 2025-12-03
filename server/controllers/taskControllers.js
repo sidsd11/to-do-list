@@ -49,11 +49,11 @@ export const getSingleTask = async (req, res) => {
 export const createTask = async (req, res) => {
     try {
         const userId = req.user.id
-        const {email, title, description} = req.body
-        if (!email, !title, !description) {
+        const {title, description} = req.body
+        if (!title, !description) {
             return res.json({success: false, message: 'Missing details'})
         }
-        const createTask = new taskModel({userId, email, title, description, createdAt: Date.now()})
+        const createTask = new taskModel({userId, title, description, createdAt: Date.now()})
         await createTask.save()
     
         return res.json({success: true, message: 'Task created succesfully'})        
@@ -150,7 +150,7 @@ export const pendingTask = async (req, res) => {
 
 export const deleteTask = async (req, res) => {
     try {
-        const {taskId} = req.body
+        const taskId = req.params.id
         if (!taskId) {
             return res.json({success: false, message: 'Missing details'})
         }
