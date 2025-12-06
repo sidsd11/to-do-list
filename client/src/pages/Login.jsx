@@ -1,11 +1,10 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { assets } from '../assets/assets.js'
 import { useNavigate } from 'react-router-dom'
 import { AppContext } from '../context/AppContext.jsx'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { Loader, User, Mail, Lock } from 'lucide-react'
-import { useEffect } from 'react'
 
 const Login = () => {
     const navigate = useNavigate()
