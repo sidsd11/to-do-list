@@ -100,7 +100,7 @@ const MyTasks = () => {
                 toast.error('Title and description are same as before.')
                 return
             }
-            
+
             const {data} = await axios.patch(`${backendUrl}/api/task/edit-task/${editTaskId}`, {title: EditTaskTitle, description: editTaskDescription})
             if (data.success) {
                 getTasks()
