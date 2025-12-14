@@ -1,5 +1,5 @@
 import React from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Home from './pages/Home'
@@ -18,7 +18,7 @@ const App = () => {
                 <Route path='/email-verify' element={<EmailVerify />} />
                 <Route path='/reset-password' element={<ResetPassword />} />
                 <Route path='/my-tasks' element={<MyTasks />} />
-                <Route path='*' element={<Navigate to='/login' replace />} />
+                <Route path='*' element={<Navigate to='/home' replace />} />
             </Routes>
         </div>
     )
