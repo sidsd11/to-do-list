@@ -62,7 +62,7 @@ const Navbar = () => {
                         <div className='absolute hidden group-hover:block top-0 right-0 z-10 text-black rounded pt-10'>
                             <ul className='list none m-0 p-2 text-sm rounded-2xl border border-black bg-linear-to-br from-blue-50 to-purple-100'>
                                 {
-                                    currPage !== '/' &&
+                                    currPage !== '/' && currPage !== '/home' &&
                                     <li onClick={() => navigate('/')} className='py-2 px-2 whitespace-nowrap rounded-lg transition-all cursor-pointer hover:bg-linear-to-r hover:from-blue-100 hover:to-purple-200 hover:scale-110'>
                                         Home
                                     </li>
